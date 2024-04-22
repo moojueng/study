@@ -1,0 +1,166 @@
+링크:
+- google >> install ros2 humble
+- https://velog.io/@i_robo_u/ROS2-Humble-%EC%84%A4%EC%B9%98%EB%B0%A9%EB%B2%95
+- https://www.youtube.com/channel/UClGlsFFuavWVjA_MgdFPNjQ/videos (하드웨어)
+
+자막:
+- chrome 웹 스토어 >> Video CC Translator
+
+version:
+- ROS2 Humble/Ubuntu 22.04
+
+install:
+- ROS2(recap)
+- Nav2 stack
+- Additional tools
+
+로컬환경 추천:
+가상환경:
+- VMware Workstation 사용
+- VirtualBox #3D 시각도구 제대로 작동안함
+
+
+ros2 셋팅
+- 로케일 설정
+locale  # check for UTF-8
+
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+locale  # verify settings
+
+- 소스 설정(ros2 apt 저장소를 시스템에 추가)
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+- apt를 사용하여 ROS2 GPG키 추가
+sudo apt update && sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+- 소스 목록에 저장소 추가
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+- ROS2 패키지 설치
+sudo apt update
+sudo apt upgrade
+
+- 데스크탑 설치(권장): ROS, RViz, 데모, 듀토리얼
+sudo apt install ros-humble-desktop
+- ROS-Base 설치: 통신 라이브러리, 메시지 패키지, 명령줄 도구
+sudo apt install ros-humble-ros-base
+- 개발토구: ROS패키지를 구축하기 위한 컴파일러 및 기타 도구
+sudo apt install ros-dev-tools
+
+- 환경설정
+# Replace ".bash" with your shell if you're not using bash
+# Possible values are: setup.bash, setup.sh, setup.zsh
+vim ~/.bashrc 
+#맨아랫줄에 추가
+source /opt/ros/humble/setup.bash
+
+- 통신테스트
+#1번 터미널
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_cpp talker
+#2번 터미널
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_py listener
+
+- ROS2 완전삭제
+sudo apt remove ~nros-humble-* && sudo apt autoremove
+sudo rm /etc/apt/sources.list.d/ros2.list
+sudo apt update
+sudo apt autoremove
+# Consider upgrading for packages previously shadowed.
+sudo apt upgrade
+
+- 스택 탐색용 패키지 설치
+sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-turtlebot3*
+
+- 빌드도구 설치
+sudo apt install python3-colcon-common-extensions
+sudo apt install git (패키지 다운받기 위한 도구)
+- 개발시 편리한 도구
+sudo apt install terminator
+(수평이동 shift, 수평분할 ctrl+shift+o, 수직분할 ctrl+shift+e
+- 텍스트편집기
+sudo snap install code --classic
+
+- vscode 확장팩 설치
+ros
+CMake
+
+- 시뮬레이션에 사용할 터틀봇설치
+vim ~/.bashrc
+#제일 아랫줄
+export TURTLEBOT3_MODEL=waffle
+- 터틀봇 설치 확인
+source .bashrc
+printenv | grep TURTLE
+# TURTLEBOT3_MODEL=waffle
+
+- 가제보실행
+gazebo
+
+- 가제보에 터틀봇 그리기
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+- 로봇을 움직일 수 있게 해주는 노드
+ros2 run turtlebot3_teleop teleop_keyboard
+
+- 명령어 리스트
+ros2 topic list
+
+- 지도생성하는방법
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
+#turtlebot3 슬램기능, use_sim_time:=True(시뮬레이션 시간 사용)
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+- gazebo는 실제 로봇을 대체하는 것, 
+현실세계에서 실제로봇을 사용하거나 시뮬레이션에서 로봇또는 시뮬레이션 로봇을 사용
+(물리학, 관성, 중력 등 모든것이 포함됨)
+- RViz 시각화 위한 옵션
+지도를 생성하고 저장할 수 있으며 3D시각화를 위한 도구(시뮬레이션X, 시뮬레이션=gazebo)
+
+3번째 터미널에서 로봇 움직이게 하는 명령어 실행
+ros2 run turtlebot3_teleop teleop_keyboard
+- RViz 맵보는법
+장애물이나 벽 = 검은색 픽셀
+여유공간 = 흰색 픽셀
+아직 밝혀지지 않은 맵 = 회색 픽셀
+* 로봇이 너무 빨리 움직이면 맵핑할때 지도가 올바르게 생성되지 않을 수 있음
+* 맵핑시 로봇이 장애물에 부딪히면 맵핑이 제대로 되지 않을 수 있음
+
+- 시뮬레이션 최종 실행
+터미널 3개
+1번 터미널 = ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
+2번 터미널 = ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+3번 터미널 = ros2 run turtlebot3_teleop teleop_keyboard
+* 맵핑을 한다
+
+- 지도 생성법(저장)
+폴더생성 mkdir maps
+맵 저장 ros2 run nav2_map_server map_saver_cli -f maps/my_map
+맵 생성 확인 cd maps
+
+#resolution : 0.05
+resolution - 해상도( 픽셀당 미터단위), 1픽셀당 0.05미터(5cm의미)
+* 모바일 로봇으로 내비게이션 수행 시 5cm면 충분함
+* 문을 통과시 10cm~15cm 가 충분함, 하지만 해상도를 올리면 더 많은 연산을 해야함
+#origin 로봇의 원점
+#negate 0을 넣을 시 원래대로, 1을 넣을시 모든 값을 반대로 흰색=장애물, 벽 검은색=여유공간
+#occupied_thresh, free_thresh 인식된 임계값
+ex) occupied_thresh: 0.65 픽셀값이 255 중 65퍼센트 이상이 검은색 방향으로 들어가면 인식
+    free_thresh: 0.25 픽셀값이 255 중 25퍼센트 미만일 경우 무시
+* 픽셀은 회색음영으로 나타냄, 완전한 검정색 & 흰색은 각 픽셀 0~255 사이의 값
+
+#지도 열기 vim my_map.pgm
+p5 인식된 장애물수(gazebo참고)
+x = 118 픽셀
+y = 122 픽셀
+지도의 길이 = x축 118*0.05 = 5.9m
+                  y축 122*0.05 = 6.1m
+
+- 실습
+ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
+* 맵핑 후 최종적으로 얻어야 할 자료는 이미지파일, yaml파일이 포함된 맵
+
+

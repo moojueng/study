@@ -1,0 +1,32 @@
+1. A + AB
+
+2. AB + AB'
+
+3. A'BC + AC
+
+4. A'B + ABC' + ABC
+
+5. AB+A(CD+CD')
+
+6. (BC'+A'D)(AB'+CD')
+
+7. (A+B)'(A'+B')'
+
+8. A+A'B+A'B'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

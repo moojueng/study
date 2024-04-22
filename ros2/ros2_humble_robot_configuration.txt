@@ -1,0 +1,22 @@
+ROS2
+
+Lidar - Mapping
+Camera - Vision
+Raspberry Pi - Control
+
+language - Python, C++
+
+로봇이 없으면 >> 자율주행 로봇의 시뮬레이터 사용( 추가 하드웨어 없이 PC만으로 로봇의 동작을 제어 가능)
+
+진행 순서
+- Odometry & Control
+- Mapping & Localization
+- Planning & Navigation
+- Vision &Perception
+
+
+Setup
+- 가상머신(vmware)
+- Ubuntu22.04 - https://ubuntu.com/download/desktop
+Install Ubuntu on Dual Boot
+- Create boot USB
